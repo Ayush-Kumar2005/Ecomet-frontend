@@ -1,0 +1,116 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+
+const Signup = () => {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await axios.post(
+        "http://localhost:5001/api/users", 
+        form
+      );
+
+      console.log(res);
+
+      // ✅ Save token
+      localStorage.setItem("token", res.data.token);
+
+
+      // Redirect to home
+      navigate("/");
+
+    } catch (err) {
+        console.log("ERROR:", err.response.data);
+        setError(err.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <form
+        className="bg-white p-8 rounded-2xl shadow-lg w-96"
+        onSubmit={handleSubmit}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
+
+        {/* Error */}
+        {error && (
+          <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
+        )}
+
+        {/* Name */}
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          className="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+
+        {/* Email */}
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          className="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+
+        {/* Password */}
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          className="w-full mb-6 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
+
+        {/* Button */}
+        <button
+          type="submit"
+          className="w-full bg-green-500 text-white py-3 rounded-xl hover:bg-green-600 transition"
+        >
+          {loading ? "Creating account..." : "Signup"}
+        </button>
+
+        {/* Login Link */}
+        <p className="text-center mt-4 text-gray-500">
+          Already have an account?{" "}
+          <Link to="/login" className="text-green-500 font-semibold">
+            Login
+          </Link>
+        </p>
+      </form>
+    </div>
+  );
+};
+
+export default Signup;
