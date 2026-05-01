@@ -5,22 +5,21 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-// Custom Arrows
 const NextArrow = ({ onClick }) => (
   <div
-    className="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black text-white p-2 rounded-full cursor-pointer"
+    className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-20 backdrop-blur-xl bg-white/10 hover:bg-emerald-400 hover:text-black text-white p-4 rounded-full cursor-pointer transition-all duration-300 border border-white/20"
     onClick={onClick}
   >
-    <FaChevronRight />
+    <FaChevronRight size={20} />
   </div>
 );
 
 const PrevArrow = ({ onClick }) => (
   <div
-    className="hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black text-white p-2 rounded-full cursor-pointer"
+    className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-20 backdrop-blur-xl bg-white/10 hover:bg-emerald-400 hover:text-black text-white p-4 rounded-full cursor-pointer transition-all duration-300 border border-white/20"
     onClick={onClick}
   >
-    <FaChevronLeft />
+    <FaChevronLeft size={20} />
   </div>
 );
 
@@ -28,64 +27,69 @@ const Carousels = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 600,
+    speed: 800,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2500,
-    pauseOnHover: true,
+    autoplaySpeed: 4000,
     nextArrow: <NextArrow />,
-    prevArrow: <PrevArrow />
+    prevArrow: <PrevArrow />,
   };
 
   const products = [
     {
       id: 1,
-      name: "T-shirt",
-      img: "https://tse3.mm.bing.net/th/id/OIP.XoghGx2arlsQQ0woWl6QVgHaDc?rs=1&pid=ImgDetMain&o=7&rm=3"
+      name: "Urban Collection 2026",
+      desc: "Premium fabrics engineered for the modern explorer.",
+      img: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop"
     },
     {
       id: 2,
-      name: "Shoes",
-      img: "https://tse1.mm.bing.net/th/id/OIP.Q9-KkCoDZjN9BB8yjlSpbgHaEK?rs=1&pid=ImgDetMain&o=7&rm=3"
-    },
-    {
-      id: 3,
-      name: "Jacket",
-      img: "https://tse3.mm.bing.net/th/id/OIP.XoghGx2arlsQQ0woWl6QVgHaDc?rs=1&pid=ImgDetMain&o=7&rm=3"
-    },
-    {
-      id: 4,
-      name: "Jeans",
-      img: "https://tse1.mm.bing.net/th/id/OIP.Q9-KkCoDZjN9BB8yjlSpbgHaEK?rs=1&pid=ImgDetMain&o=7&rm=3"
+      name: "Next-Gen Footwear",
+      desc: "Step into the future with unparalleled comfort.",
+      img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop"
     }
   ];
 
   return (
-    <div className="w-full px-2 md:px-6 lg:px-10 mt-4">
+    <div className="w-full px-2 md:px-6 lg:px-10 overflow-hidden">
       <Slider {...settings}>
         {products.map((product) => (
-          <div key={product.id} className="px-1 md:px-2">
-            <div className="relative overflow-hidden rounded-xl shadow-lg group">
+          <div key={product.id} className="outline-none py-4">
+            <div className="relative overflow-hidden rounded-[2rem] shadow-2xl group cursor-pointer border border-white/5 bg-[#0f172a]">
+              
+              {/* Image Container with Fixed Aspect Ratio */}
+              <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden">
+                <img
+                  src={product.img}
+                  alt={product.name}
+                  loading="eager"
+                  className="w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-110"
+                />
+              </div>
+              
+              {/* Cinematic Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/20 to-transparent opacity-90"></div>
 
-              {/* Image */}
-              <img
-                src={product.img}
-                alt={product.name}
-                className="w-full h-[180px] sm:h-[220px] md:h-[300px] lg:h-[350px] object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
-
-              {/* Text */}
-              <div className="absolute bottom-4 left-4 text-white">
-                <h2 className="text-sm sm:text-lg md:text-xl font-semibold">
+              {/* Content Box */}
+              <div className="absolute bottom-10 left-6 md:bottom-20 md:left-20 text-white max-w-2xl transition-all duration-500 transform group-hover:-translate-y-2">
+                <span className="inline-block px-3 py-1 mb-4 text-[10px] font-bold tracking-[0.2em] text-black uppercase bg-emerald-400 rounded-full">
+                  Featured Trend
+                </span>
+                
+                <h2 className="text-3xl md:text-7xl font-black mb-4 leading-tight tracking-tighter">
                   {product.name}
                 </h2>
-                <button className="mt-1 text-xs sm:text-sm bg-emerald-400 text-black px-3 py-1 rounded-full hover:bg-emerald-300 transition">
-                  Shop Now
-                </button>
+                
+                <p className="hidden md:block text-gray-300 text-lg mb-8 max-w-md font-light leading-relaxed">
+                  {product.desc}
+                </p>
+
+                <div className="flex items-center gap-4">
+                  <button className="bg-emerald-400 text-black px-8 md:px-12 py-3.5 rounded-full font-black text-sm hover:bg-white transition-all shadow-lg">
+                    SHOP COLLECTION
+                  </button>
+                </div>
               </div>
 
             </div>

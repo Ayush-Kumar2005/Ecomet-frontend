@@ -1,88 +1,86 @@
-import React, { useEffect, useRef, useState } from "react";
-import CategoryCard from "./CategoryCard";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
-const Categories = () => {
-  const scrollRef = useRef(null);
-  const [allParentCategories , setAllParentCategories] = useState([]);
+const Categories = ({ selectedCategory, setSelectedCategory }) => {
+  const [categories, setApiCategories] = useState([]);
 
-  const scrollLeft = () => {
-    scrollRef.current.scrollBy({
-      left: -scrollRef.current.clientWidth,
-      behavior: "smooth",
-    });
-  };
+  const staticCategories = [
+    { name: "Electronics" },
+    { name: "Fashion" },
+    { name: "Mobiles" },
+    { name: "Home" },
+    { name: "Appliances" },
+    { name: "Gaming" },
+    { name: "Beauty" },
+    { name: "Grocery" },
+  ];
 
-  const scrollRight = () => {
-    scrollRef.current.scrollBy({
-      left: scrollRef.current.clientWidth,
-      behavior: "smooth",
-    });
-  };
-
-  useEffect(()=>{
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/api/categories/main");
+        const json = await response.json();
+        if (json?.data) setApiCategories(json.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
     fetchData();
-  },[]);
+  }, []);
 
-  const fetchData = async () =>{
-    const data = await fetch("http://localhost:5001/api/categories/main");
-    const json = await data.json();
-    setAllParentCategories(json?.data);
-    console.log(json);
-  }
+  const displayCategories = categories.length > 0 ? categories : staticCategories;
 
   return (
-    <div className="relative px-4 md:px-8 py-6 bg-[#020617] text-white">
+    <div className="w-full bg-white dark:bg-[#0f172a] border-b border-slate-200 dark:border-white/10 transition-colors duration-500 shadow-sm sticky top-[72px] z-40">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 overflow-x-auto no-scrollbar">
+        <div className="flex items-center justify-between gap-6 md:gap-10 py-4 min-w-max md:min-w-0">
+          
+          {/* "All" Tab */}
+          <button 
+            onClick={() => setSelectedCategory("All")}
+            className="group relative flex flex-col items-center cursor-pointer outline-none"
+          >
+            <span className={`text-xs md:text-sm font-bold tracking-wider transition-all duration-300 ${
+              selectedCategory === "All" 
+              ? "text-emerald-500 scale-110" 
+              : "text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"
+            }`}>
+              ALL
+            </span>
+            {/* Active Indicator Underline */}
+            <div className={`absolute -bottom-[17px] h-1 w-full bg-emerald-500 rounded-t-full transition-all duration-300 ${
+              selectedCategory === "All" ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+            }`}></div>
+          </button>
 
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg md:text-xl font-semibold text-emerald-400">
-          Shop from Top Categories
-        </h2>
-
-        <Link
-          to="/ViewAllCategories"
-          className="text-sm text-gray-400 hover:text-emerald-400 transition"
-        >
-          View more →
-        </Link>
-      </div>
-
-      {/* Left Arrow */}
-      <button
-        onClick={scrollLeft}
-        className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-[#1e293b] hover:bg-emerald-400 hover:text-black text-white shadow-lg rounded-full p-3 transition"
-      >
-        ◀
-      </button>
-
-      {/* Scroll Container */}
-      <div
-        ref={scrollRef}
-        className="overflow-x-auto scroll-smooth scrollbar-hide"
-      >
-        <div className="flex gap-4 w-max">
-
-          {allParentCategories.map((category) => (
-            <div
-              key={category._id}
-              className="min-w-[120px] sm:min-w-[140px] md:min-w-[160px] transform hover:scale-105 transition duration-300"
+          {/* Dynamic Category Names */}
+          {displayCategories.map((cat, index) => (
+            <button 
+              key={cat._id || index}
+              onClick={() => setSelectedCategory(cat.name)}
+              className="group relative flex flex-col items-center cursor-pointer outline-none"
             >
-              <CategoryCard category={category} />
-            </div>
+              <span className={`text-xs md:text-sm font-bold tracking-wider transition-all duration-300 uppercase ${
+                selectedCategory === cat.name 
+                ? "text-emerald-500 scale-110" 
+                : "text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"
+              }`}>
+                {cat.name}
+              </span>
+              
+              {/* Active Indicator Underline */}
+              <div className={`absolute -bottom-[17px] h-1 w-full bg-emerald-500 rounded-t-full transition-all duration-300 ${
+                selectedCategory === cat.name ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+              }`}></div>
+            </button>
           ))}
 
         </div>
       </div>
 
-      {/* Right Arrow */}
-      <button
-        onClick={scrollRight}
-        className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-[#1e293b] hover:bg-emerald-400 hover:text-black text-white shadow-lg rounded-full p-3 transition"
-      >
-        ▶
-      </button>
-
+      <style jsx="true">{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </div>
   );
 };
