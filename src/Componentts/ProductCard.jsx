@@ -1,71 +1,145 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaHeart } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
-  const { _id, name, ratings, numOfReviews, description, price, images } = product;
+  const {
+    _id,
+    name,
+    ratings,
+    numOfReviews,
+    price,
+    images,
+  } = product;
 
   const image_url =
     images?.[0]?.url ||
     "https://cottonfolk.in/cdn/shop/files/Men_sBrownPinstripeShort-SleeveShirt.jpg?v=1732268509&width=2048";
 
   return (
-    <Link to={`/productDetails/${_id}`}>
+    <Link to={`/productDetails/${_id}`} className="block">
       <div
         className="
-        w-44 md:w-48 lg:w-56 
-        bg-gray-50 m-3 rounded-xl shadow-md 
-        transition-all duration-300 ease-in-out 
-        hover:scale-110 hover:z-20 hover:shadow-2xl
-        cursor-pointer group
+          group
+          bg-white
+          dark:bg-[#0f172a]
+          border
+          border-slate-200
+          dark:border-white/10
+          rounded-lg
+          overflow-hidden
+          transition-all
+          duration-300
+          hover:shadow-lg
+          hover:border-emerald-500/30
         "
       >
-        {/* Image */}
-        <div className="relative w-full h-40 md:h-44 bg-gray-200 flex items-center justify-center overflow-hidden rounded-t-xl">
+        {/* IMAGE */}
+        <div className="relative bg-slate-100 dark:bg-[#020617] overflow-hidden">
+          
           <img
             src={image_url}
             alt={name}
-            className="w-full h-full object-contain group-hover:scale-105 transition duration-300"
+            className="
+              w-full
+              aspect-[3/4]
+              object-cover
+              group-hover:scale-[1.03]
+              transition-transform
+              duration-300
+            "
           />
 
-          {/* Rating */}
-          <div className="absolute bottom-2 left-2 bg-black/60 text-white rounded px-2 py-0.5 flex items-center gap-1 text-xs">
-            <FaStar className="w-3 h-3 text-yellow-400" />
-            <span>{ratings?.toFixed(1) || "0.0"}</span>
-            <span>({numOfReviews})</span>
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="px-3 py-2 flex flex-col gap-1">
-
-          {/* Name */}
-          <p className="text-sm font-semibold text-gray-900 line-clamp-2">
-            {name}
-          </p>
-
-          {/* Price */}
-          <p className="text-sm font-bold text-emerald-600">
-            ₹{price / 100}
-          </p>
-
-          {/* Extra Details on Hover */}
-          <div
+          {/* DISCOUNT BADGE */}
+          <span
             className="
-            opacity-0 max-h-0 overflow-hidden 
-            group-hover:opacity-100 group-hover:max-h-32 
-            transition-all duration-300
+              absolute
+              top-2
+              left-2
+              bg-emerald-500
+              text-black
+              text-[10px]
+              font-bold
+              px-2
+              py-1
+              rounded
             "
           >
-            <p className="text-xs text-gray-600 mt-2">
-              {description}
-            </p>
+            20% OFF
+          </span>
 
-            <p className="text-xs text-gray-500">
-              Reviews: {numOfReviews}
-            </p>
+        </div>
+
+        {/* CONTENT */}
+        <div className="p-3">
+          
+          {/* BRAND */}
+          <p className="text-xs text-slate-500 dark:text-gray-400 uppercase tracking-wide">
+            Fashion
+          </p>
+
+          {/* PRODUCT NAME */}
+          <h3
+            className="
+              text-sm
+              font-medium
+              text-slate-900
+              dark:text-white
+              line-clamp-2
+              mt-1
+              leading-5
+              min-h-[40px]
+            "
+          >
+            {name}
+          </h3>
+
+          {/* RATING */}
+          <div className="flex items-center gap-1 mt-2">
+            
+            <div
+              className="
+                flex
+                items-center
+                gap-1
+                bg-emerald-500
+                text-white
+                text-xs
+                px-1.5
+                py-0.5
+                rounded
+                font-semibold
+              "
+            >
+              <span>{ratings?.toFixed(1) || "4.5"}</span>
+              <FaStar className="text-[10px]" />
+            </div>
+
+            <span className="text-xs text-slate-500">
+              ({numOfReviews})
+            </span>
           </div>
 
+          {/* PRICE */}
+          <div className="mt-3 flex items-center gap-2">
+            
+            <span className="text-lg font-bold text-slate-900 dark:text-white">
+              ₹{price / 100}
+            </span>
+
+            <span className="text-sm text-slate-400 line-through">
+              ₹{Math.floor(price / 100 + 400)}
+            </span>
+
+            <span className="text-sm font-medium text-emerald-500">
+              20% off
+            </span>
+          </div>
+
+          {/* DELIVERY */}
+          <p className="text-xs text-slate-500 mt-2">
+            Free delivery
+          </p>
         </div>
       </div>
     </Link>
