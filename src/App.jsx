@@ -15,6 +15,11 @@ import Cart from "./Componentts/Cart";
 import Login from "./Componentts/Login";
 import Signup from "./Componentts/SignUp";
 import ProtectedRoute from "./Componentts/ProtectedRoute";
+import Checkout from "./Componentts/Checkout";
+import Payment from "./Componentts/Payment";
+import OrderSuccess from "./Componentts/OrderSuccess";
+import Wishlist from "./Componentts/Wishlist";
+import SearchPage from "./Componentts/SearchPage";
 
 
 const App = () => {
@@ -32,13 +37,41 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/search" element={<SearchPage />} />
 
 
         <Route
-          path="/buy-now"
+          path="/checkout"
           element={
             <ProtectedRoute>
-              <BuyNow />
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/payment/:orderId"
+          element={
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/order-success/:orderId"
+          element={
+            <ProtectedRoute>
+              <OrderSuccess  />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute>
+              <Wishlist />
             </ProtectedRoute>
           }
         />

@@ -1,7 +1,15 @@
+
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+
+import {
+  useNavigate,
+  Link,
+  useLocation,
+} from "react-router-dom";
+
 import { useDispatch } from "react-redux";
+
 import { setCredentials } from "../slices/authSlice";
 
 const Login = () => {
@@ -11,13 +19,23 @@ const Login = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+
+  const location = useLocation();
+
   const dispatch = useDispatch();
 
+  const redirect =
+    location.state?.from?.pathname || "/";
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -25,75 +43,93 @@ const Login = () => {
 
     try {
       setLoading(true);
+
       setError("");
 
       const res = await axios.post(
-        "http://localhost:5001/api/users/login", 
+        "http://localhost:5001/api/users/login",
         form
       );
 
-      console.log(res);
-      const {data} = res;
+      const data = res.data;
 
       dispatch(setCredentials(data));
-        navigate("/");
 
-
+      navigate(redirect);
 
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(
+        err.response?.data?.message ||
+          "Login failed"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <form
-        className="bg-white p-8 rounded-2xl shadow-lg w-96"
-        onSubmit={handleSubmit}
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] flex justify-center items-center px-4">
 
-        {/* Error */}
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-white/5 rounded-[2rem] p-8 shadow-xl"
+      >
+        <div className="mb-8 text-center">
+
+          <p className="text-emerald-500 text-xs uppercase tracking-[0.3em] font-bold mb-2">
+            Welcome Back
+          </p>
+
+          <h2 className="text-3xl font-black text-slate-900 dark:text-white">
+            Login
+          </h2>
+        </div>
+
+        {/* ERROR */}
         {error && (
-          <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
+          <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-500 text-sm rounded-xl px-4 py-3">
+            {error}
+          </div>
         )}
 
-        {/* Email */}
+        {/* EMAIL */}
         <input
           type="email"
           name="email"
-          placeholder="Email"
-          className="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          placeholder="Email Address"
           value={form.email}
           onChange={handleChange}
           required
+          className="w-full mb-4 bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-white/5 rounded-2xl px-5 py-4 outline-none focus:border-emerald-500 text-slate-900 dark:text-white"
         />
 
-        {/* Password */}
+        {/* PASSWORD */}
         <input
           type="password"
           name="password"
           placeholder="Password"
-          className="w-full mb-6 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
           value={form.password}
           onChange={handleChange}
           required
+          className="w-full mb-6 bg-slate-100 dark:bg-[#020617] border border-slate-200 dark:border-white/5 rounded-2xl px-5 py-4 outline-none focus:border-emerald-500 text-slate-900 dark:text-white"
         />
 
-        {/* Button */}
+        {/* BUTTON */}
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-3 rounded-xl hover:bg-green-600 transition"
+          className="w-full bg-emerald-500 hover:bg-emerald-400 text-black py-4 rounded-2xl font-black transition-all duration-300"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        {/* Signup Link */}
-        <p className="text-center mt-4 text-gray-500">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-green-500 font-semibold">
+        {/* SIGNUP */}
+        <p className="text-center mt-6 text-slate-500 dark:text-gray-400">
+          Don’t have an account?{" "}
+
+          <Link
+            to="/signup"
+            className="text-emerald-500 font-bold"
+          >
             Signup
           </Link>
         </p>
