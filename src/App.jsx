@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -15,17 +15,21 @@ import Cart from "./Componentts/Cart";
 import Login from "./Componentts/Login";
 import Signup from "./Componentts/SignUp";
 import ProtectedRoute from "./Componentts/ProtectedRoute";
+import AdminRoute from "./Componentts/AdminRoute";
+import AdminDashboard from "./Componentts/AdminDashboard";
 import Checkout from "./Componentts/Checkout";
 import Payment from "./Componentts/Payment";
 import OrderSuccess from "./Componentts/OrderSuccess";
 import Wishlist from "./Componentts/Wishlist";
 import SearchPage from "./Componentts/SearchPage";
 
-
 const App = () => {
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith("/admin");
+
   return (
-    <div>
-      <Header />
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#020617]">
+      {!isAdminPage && <Header />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -39,6 +43,14 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/search" element={<SearchPage />} />
 
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
 
         <Route
           path="/checkout"
@@ -62,7 +74,7 @@ const App = () => {
           path="/order-success/:orderId"
           element={
             <ProtectedRoute>
-              <OrderSuccess  />
+              <OrderSuccess />
             </ProtectedRoute>
           }
         />
@@ -75,9 +87,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
       </Routes>
-
     </div>
   );
 };

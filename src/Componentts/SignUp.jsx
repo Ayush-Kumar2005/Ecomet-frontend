@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -25,90 +26,111 @@ const Signup = () => {
       setLoading(true);
       setError("");
 
-      const res = await axios.post(
-        "http://localhost:5001/api/users", 
-        form
-      );
+      const res = await axios.post("http://localhost:5001/api/users", form);
 
       console.log(res);
 
-      // ✅ Save token
       localStorage.setItem("token", res.data.token);
 
-
-      // Redirect to home
       navigate("/");
-
     } catch (err) {
-        console.log("ERROR:", err.response.data);
-        setError(err.response?.data?.message || "Signup failed");
+      console.log("ERROR:", err.response.data);
+      setError(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <form
-        className="bg-white p-8 rounded-2xl shadow-lg w-96"
+    <div className="page-shell flex justify-center items-center px-4 py-12">
+      <motion.form
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         onSubmit={handleSubmit}
+        className="w-full max-w-md card p-8 md:p-10 shadow-card-hover"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
+        <div className="mb-8 text-center">
+          <p className="section-eyebrow mb-2">Get Started</p>
+          <h2 className="section-title text-3xl">Create Account</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            Join Ecomet for a better shopping experience
+          </p>
+        </div>
 
-        {/* Error */}
-        {error && (
-          <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
-        )}
+        {error && <div className="alert-error mb-6">{error}</div>}
 
-        {/* Name */}
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          className="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="name" className="input-label">
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Your name"
+              className="input-field"
+              value={form.name}
+              onChange={handleChange}
+              required
+              autoComplete="name"
+            />
+          </div>
 
-        {/* Email */}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full mb-4 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
+          <div>
+            <label htmlFor="email" className="input-label">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="you@email.com"
+              className="input-field"
+              value={form.email}
+              onChange={handleChange}
+              required
+              autoComplete="email"
+            />
+          </div>
 
-        {/* Password */}
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full mb-6 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
+          <div>
+            <label htmlFor="password" className="input-label">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              className="input-field"
+              value={form.password}
+              onChange={handleChange}
+              required
+              autoComplete="new-password"
+            />
+          </div>
+        </div>
 
-        {/* Button */}
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-3 rounded-xl hover:bg-green-600 transition"
+          disabled={loading}
+          className="btn-primary w-full mt-8"
         >
-          {loading ? "Creating account..." : "Signup"}
+          {loading ? "Creating account…" : "Sign Up"}
         </button>
 
-        {/* Login Link */}
-        <p className="text-center mt-4 text-gray-500">
+        <p className="text-center mt-6 text-sm text-slate-500 dark:text-slate-400">
           Already have an account?{" "}
-          <Link to="/login" className="text-green-500 font-semibold">
+          <Link
+            to="/login"
+            className="text-brand-500 font-semibold hover:text-brand-400 transition-colors"
+          >
             Login
           </Link>
         </p>
-      </form>
+      </motion.form>
     </div>
   );
 };

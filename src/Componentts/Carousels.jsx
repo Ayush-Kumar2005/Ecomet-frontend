@@ -56,7 +56,7 @@ const Carousels = () => {
       <Slider {...settings}>
         {products.map((product) => (
           <div key={product.id} className="outline-none py-4">
-            <div className="relative overflow-hidden rounded-[2rem] shadow-2xl group cursor-pointer border border-white/5 bg-[#0f172a]">
+            <div className="relative overflow-hidden rounded-3xl md:rounded-4xl shadow-card-hover group cursor-pointer border border-slate-200/50 dark:border-white/5 bg-surface-card-dark">
               
               {/* Image Container with Fixed Aspect Ratio */}
               <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden">

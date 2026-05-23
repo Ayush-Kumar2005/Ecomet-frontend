@@ -5,6 +5,7 @@ import SubCategoryCard from "./SubCategoryCard";
 const SubCategories = () => {
   const { id } = useParams();
   const [subCategories, setSubCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchSubCategories();
@@ -12,38 +13,45 @@ const SubCategories = () => {
 
   const fetchSubCategories = async () => {
     try {
+      setLoading(true);
       const data = await fetch(`http://localhost:5001/api/categories/sub/${id}`);
       const json = await data.json();
       console.log(json);
-      setSubCategories(json.data);
+      setSubCategories(json.data || []);
     } catch (err) {
       console.error("Error fetching subcategories:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white px-4 md:px-8 py-6">
-      {/* Header */}
-      <h2 className="text-xl md:text-2xl font-semibold text-emerald-400 mb-6">
-        Sub Categories
-      </h2>
+    <div className="page-shell">
+      <div className="page-container">
+        <header className="mb-10">
+          <p className="section-eyebrow mb-2">Browse</p>
+          <h1 className="section-title">Sub Categories</h1>
+          <div className="section-accent" />
+        </header>
 
-      {/* Flex Container with Wrap */}
-      <div className="flex flex-wrap gap-4">
-        {subCategories.map((sub) => (
-          <div
-            key={sub._id}
-            className="flex-shrink-0 transform hover:scale-105 transition duration-200"
-          >
-            <SubCategoryCard subCategory={sub} />
+        {loading ? (
+          <div className="flex flex-wrap gap-5">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="skeleton w-44 h-56 rounded-3xl" />
+            ))}
           </div>
-        ))}
+        ) : subCategories.length === 0 ? (
+          <div className="empty-state">
+            <p className="text-slate-500 text-sm">No sub-categories found.</p>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-5">
+            {subCategories.map((sub) => (
+              <SubCategoryCard key={sub._id} subCategory={sub} />
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Empty State */}
-      {subCategories.length === 0 && (
-        <p className="text-gray-400 mt-6">No sub-categories found.</p>
-      )}
     </div>
   );
 };

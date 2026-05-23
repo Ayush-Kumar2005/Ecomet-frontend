@@ -1,30 +1,29 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const CategoryCard = ({ subCategory }) => {
+const SubCategoryCard = ({ subCategory }) => {
+  const imageUrl =
+    subCategory?.images?.[0]?.url ||
+    "https://cottonfolk.in/cdn/shop/files/Men_sBrownPinstripeShort-SleeveShirt.jpg?v=1732268509&width=2048";
+
   return (
     <Link to={`/product/${subCategory._id}`}>
-      <div className="w-40 h-52 bg-gray-50 rounded-xl shadow hover:shadow-md transition duration-300 overflow-hidden cursor-pointer">
-
-        {/* Image */}
-        <div className="w-full h-32 bg-gray-200 flex items-center justify-center">
+      <article className="card-interactive w-40 sm:w-44 h-56 flex flex-col overflow-hidden">
+        <div className="flex-1 bg-slate-100 dark:bg-surface-dark overflow-hidden">
           <img
-            src="https://cottonfolk.in/cdn/shop/files/Men_sBrownPinstripeShort-SleeveShirt.jpg?v=1732268509&width=2048"
+            src={imageUrl}
             alt={subCategory?.name}
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
           />
         </div>
-
-        {/* Name */}
-        <div className="flex items-center justify-center h-20 px-2 text-center">
-          <p className="text-sm font-medium text-black">
+        <div className="flex items-center justify-center h-16 px-3 border-t border-slate-100 dark:border-white/5">
+          <p className="text-sm font-semibold text-slate-900 dark:text-white text-center line-clamp-2">
             {subCategory?.name}
           </p>
         </div>
-
-      </div>
+      </article>
     </Link>
   );
 };
 
-export default CategoryCard;
+export default SubCategoryCard;

@@ -18,19 +18,20 @@ const ThemeToggle = () => {
 
   return (
     <button
+      type="button"
       onClick={() => setDarkMode(!darkMode)}
-      className="relative w-14 h-7 flex items-center bg-gray-300 dark:bg-emerald-900/30 rounded-full p-1 cursor-pointer transition-colors duration-300 border border-black/5 dark:border-emerald-400/20"
+      aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+      className="relative w-14 h-7 flex items-center bg-slate-700 dark:bg-emerald-950/50 rounded-full p-1 cursor-pointer transition-colors duration-300 border border-slate-600 dark:border-emerald-500/30"
     >
-      {/* Sliding Circle */}
       <div
-        className={`bg-white dark:bg-emerald-400 w-5 h-5 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+        className={`bg-white dark:bg-emerald-400 w-5 h-5 rounded-full shadow-sm transform transition-transform duration-300 flex items-center justify-center ${
           darkMode ? "translate-x-7" : "translate-x-0"
         }`}
       >
         {darkMode ? (
-          <FaMoon className="text-[10px] text-black" />
+          <FaMoon className="text-[10px] text-slate-900" aria-hidden />
         ) : (
-          <FaSun className="text-[10px] text-yellow-500" />
+          <FaSun className="text-[10px] text-amber-500" aria-hidden />
         )}
       </div>
     </button>

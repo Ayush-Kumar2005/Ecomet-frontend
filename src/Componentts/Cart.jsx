@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearCart } from "../slices/cartSlice";
 import { Link } from "react-router-dom";
-
+import { motion } from "framer-motion";
 import {
   FaShoppingBag,
   FaArrowLeft,
@@ -14,7 +14,6 @@ import CartItemCard from "./CartItemCard";
 
 const Cart = () => {
   const dispatch = useDispatch();
-
   const items = useSelector((store) => store.cart.items);
 
   const totalAmount = items.reduce(
@@ -22,139 +21,122 @@ const Cart = () => {
     0
   );
 
-  const totalItems = items.reduce(
-    (acc, item) => acc + item.quantity,
-    0
-  );
+  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
 
   const handleClearCart = () => {
     dispatch(clearCart());
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] transition-colors duration-500">
-      
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
-
-        {/* HEADER */}
-        <div className="flex items-center justify-between mb-10">
-
+    <div className="page-shell">
+      <div className="page-container">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
-            <p className="text-emerald-500 text-xs font-bold uppercase tracking-[0.3em] mb-2">
-              Shopping Cart
-            </p>
-
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-              Your Cart
-            </h1>
+            <p className="section-eyebrow mb-2">Shopping Cart</p>
+            <h1 className="section-title">Your Cart</h1>
+            {items.length > 0 && (
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                {totalItems} item{totalItems !== 1 ? "s" : ""} in your bag
+              </p>
+            )}
           </div>
 
           {items.length > 0 && (
             <button
+              type="button"
               onClick={handleClearCart}
-              className="px-5 py-3 rounded-2xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all duration-300 font-semibold"
+              className="btn-danger self-start sm:self-auto"
             >
               Clear Cart
             </button>
           )}
         </div>
 
-        {/* EMPTY STATE */}
         {items.length === 0 ? (
-          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-white/5 rounded-[2rem] p-10 md:p-20 text-center shadow-sm">
-
-            <div className="w-24 h-24 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
-              <FaShoppingBag className="text-emerald-500 text-4xl" />
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="empty-state"
+          >
+            <div className="empty-state-icon">
+              <FaShoppingBag aria-hidden />
             </div>
-
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-3">
-              Your Cart is Empty
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">
+              Your cart is empty
             </h2>
-
-            <p className="text-slate-500 dark:text-gray-400 mb-8">
-              Looks like you haven’t added anything yet.
+            <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-sm">
+              Looks like you haven&apos;t added anything yet. Explore our
+              collections and find something you love.
             </p>
-
             <Link to="/">
-              <button className="px-8 py-4 rounded-2xl bg-emerald-500 text-black font-black hover:scale-105 transition-all duration-300">
+              <button type="button" className="btn-primary">
                 Continue Shopping
               </button>
             </Link>
-          </div>
+          </motion.div>
         ) : (
           <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-
-            {/* LEFT SIDE */}
             <div>
-
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400 hover:text-emerald-500 transition-colors mb-6"
+                className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-brand-500 transition-colors mb-6"
               >
-                <FaArrowLeft />
+                <FaArrowLeft size={12} />
                 Continue Shopping
               </Link>
 
-              <div className="space-y-5">
+              <div className="space-y-4">
                 {items.map((item) => (
                   <CartItemCard key={item.id} item={item} />
                 ))}
               </div>
             </div>
 
-            {/* RIGHT SIDE */}
-            <div className="h-fit sticky top-6 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-white/5 rounded-[2rem] p-6 shadow-sm">
-
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-6">
+            <aside className="h-fit lg:sticky lg:top-24 card p-6 md:p-8">
+              <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mb-6">
                 Order Summary
               </h2>
 
-              <div className="space-y-4">
-
-                <div className="flex items-center justify-between text-slate-600 dark:text-gray-400">
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span>Items ({totalItems})</span>
-                  <span>₹{totalAmount}</span>
+                  <span className="font-medium text-slate-900 dark:text-white">
+                    ₹{totalAmount}
+                  </span>
                 </div>
-
-                <div className="flex items-center justify-between text-slate-600 dark:text-gray-400">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span>Delivery</span>
-                  <span className="text-emerald-500 font-semibold">
+                  <span className="text-brand-600 dark:text-brand-400 font-semibold">
                     Free
                   </span>
                 </div>
-
-                <div className="border-t border-slate-200 dark:border-white/10 pt-4 flex items-center justify-between">
-
-                  <span className="text-lg font-bold text-slate-900 dark:text-white">
+                <div className="border-t border-slate-200 dark:border-white/10 pt-4 flex justify-between items-center">
+                  <span className="text-base font-bold text-slate-900 dark:text-white">
                     Total
                   </span>
-
-                  <span className="text-2xl font-black text-slate-900 dark:text-white">
+                  <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
                     ₹{totalAmount}
                   </span>
                 </div>
               </div>
 
-              <Link to="/checkout">
-                <button className="w-full mt-8 bg-emerald-500 hover:bg-emerald-400 text-black py-4 rounded-2xl font-black text-lg transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-emerald-500/20">
+              <Link to="/checkout" className="block mt-8">
+                <button type="button" className="btn-primary w-full text-base">
                   Proceed to Checkout
                 </button>
               </Link>
 
-              <div className="mt-8 space-y-4">
-
-                <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-gray-400">
-                  <FaTruck className="text-emerald-500" />
+              <div className="mt-8 space-y-3 pt-6 border-t border-slate-100 dark:border-white/5">
+                <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                  <FaTruck className="text-brand-500 flex-shrink-0" />
                   Free shipping on all orders
                 </div>
-
-                <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-gray-400">
-                  <FaShieldAlt className="text-emerald-500" />
+                <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                  <FaShieldAlt className="text-brand-500 flex-shrink-0" />
                   Secure payment checkout
                 </div>
-
               </div>
-            </div>
+            </aside>
           </div>
         )}
       </div>

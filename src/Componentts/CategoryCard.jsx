@@ -1,29 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const CategoryCard = ({ category }) => {
+  const imageUrl =
+    category?.images?.[0]?.url ||
+    "https://cottonfolk.in/cdn/shop/files/Men_sBrownPinstripeShort-SleeveShirt.jpg?v=1732268509&width=2048";
+
   return (
-    <Link to={`/category/${category._id}`}>
-      <div className="w-40 h-52 bg-gray-50 rounded-xl shadow hover:shadow-md transition duration-300 overflow-hidden cursor-pointer">
-
-        {/* Image */}
-        <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
-          <img
-            src="https://cottonfolk.in/cdn/shop/files/Men_sBrownPinstripeShort-SleeveShirt.jpg?v=1732268509&width=2048"
-            alt={category?.name}
-            className="max-h-full max-w-full object-contain"
-          />
-        </div>
-
-        {/* Name */}
-        <div className="flex items-center justify-center h-20 px-2 text-center">
-          <p className="text-sm font-medium text-black">
-            {category?.name}
-          </p>
-        </div>
-
-      </div>
-    </Link>
+    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }} layout={false}>
+      <Link to={`/category/${category._id}`}>
+        <article className="card-interactive w-40 sm:w-44 h-56 flex flex-col overflow-hidden">
+          <div className="flex-1 bg-slate-100 dark:bg-surface-dark overflow-hidden">
+            <img
+              src={imageUrl}
+              alt={category?.name}
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div className="flex items-center justify-center h-16 px-3 border-t border-slate-100 dark:border-white/5">
+            <p className="text-sm font-semibold text-slate-900 dark:text-white text-center line-clamp-2">
+              {category?.name}
+            </p>
+          </div>
+        </article>
+      </Link>
+    </motion.div>
   );
 };
 
