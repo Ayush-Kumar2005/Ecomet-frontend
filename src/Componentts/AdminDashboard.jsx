@@ -64,71 +64,78 @@ const AdminDashboard = () => {
   );
 
   const loadData = async () => {
-    setLoading(true);
-    setErrors({});
-    const err = {};
+  setLoading(true);
+  setErrors({});
+  const err = {};
 
-    try {
-      const res = await fetch(`${API}/products`);
-      const json = await res.json();
-      setProducts(json.data || json || []);
-    } catch {
-      err.products = "Could not load products";
-    }
+  // 📦 1. Fetch Products
+  try {
+    const res = await fetch(`${API}/products`);
+    const json = await res.json();
+    // 💡 FIXED: Explicitly look for json.products to match your backend model key payload
+    setProducts(json.products || json.data || (Array.isArray(json) ? json : []));
+  } catch (e) {
+    console.error(e);
+    err.products = "Could not load products";
+    setProducts([]); // Safeguard state as an array
+  }
 
-    try {
-      const res = await fetch(`${API}/categories/main`);
-      const json = await res.json();
-      setCategories(json.data || []);
-    } catch {
-      err.categories = "Could not load categories";
-    }
+  // 🏷️ 2. Fetch Categories
+  try {
+    const res = await fetch(`${API}/categories/main`);
+    const json = await res.json();
+    setCategories(json.categories || json.data || (Array.isArray(json) ? json : []));
+  } catch (e) {
+    console.error(e);
+    err.categories = "Could not load categories";
+    setCategories([]); // Safeguard state as an array
+  }
 
+  // 📜 3. Fetch Orders (with nested 404 admin backup route handles)
+  try {
+    const { data } = await axios.get(`${API}/orders`, {
+      headers: authHeaders,
+    });
+    setOrders(Array.isArray(data) ? data : data.orders || data.data || []);
+  } catch {
     try {
-      const { data } = await axios.get(`${API}/orders`, {
+      const { data } = await axios.get(`${API}/orders/all`, {
         headers: authHeaders,
       });
-      setOrders(Array.isArray(data) ? data : data.orders || data.data || []);
+      setOrders(Array.isArray(data) ? data : data.orders || []);
     } catch {
-      try {
-        const { data } = await axios.get(`${API}/orders/all`, {
-          headers: authHeaders,
-        });
-        setOrders(Array.isArray(data) ? data : data.orders || []);
-      } catch {
-        err.orders = "Orders API unavailable (admin endpoint may be required)";
-        setOrders([]);
-      }
+      err.orders = "Orders API unavailable (admin endpoint may be required)";
+      setOrders([]); // Safeguard state as an array to prevent .reduce or .filter crashes
     }
+  }
 
-    try {
-      const { data } = await axios.get(`${API}/users`, {
-        headers: authHeaders,
-      });
-      setUsers(Array.isArray(data) ? data : data.users || data.data || []);
-    } catch {
-      err.users = "Users list unavailable";
-      setUsers([]);
-    }
+  // 👥 4. Fetch Users
+  try {
+    const { data } = await axios.get(`${API}/users`, {
+      headers: authHeaders,
+    });
+    setUsers(Array.isArray(data) ? data : data.users || data.data || []);
+  } catch {
+    err.users = "Users list unavailable";
+    setUsers([]); // Safeguard state as an array
+  }
 
-    setErrors(err);
-    setLoading(false);
-  };
+  setErrors(err);
+  setLoading(false);
+};
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const totalRevenue = orders.reduce(
-    (sum, o) => sum + (Number(o.totalPrice) || 0),
-    0
-  );
+  const totalRevenue = Array.isArray(orders)
+  ? orders.reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0)
+  : 0;
 
   const paidOrders = orders.filter(
     (o) => o.isPaid || o.paymentStatus === "paid" || o.paymentStatus === "success"
   ).length;
 
-  const lowStock = products.filter((p) => (p.stock ?? 99) <= 10).length;
+  // Ensure products is actually an array before calling .filter()
+const lowStock = Array.isArray(products) 
+  ? products.filter((p) => (p.stock ?? 99) <= 10).length 
+  : 0;
 
   const tabs = [
     { id: "overview", label: "Overview" },
